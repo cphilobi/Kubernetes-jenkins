@@ -32,7 +32,7 @@ pipeline {
   stages {
     stage('Build with Kaniko') {
       steps {
-        git 'https://github.com/your-correct-repository.git' // Replace this with your actual repository containing the Dockerfile
+        git 'https://github.com/fdjapi/Kubernetes-jenkins.git' // Replace this with your actual repository containing the Dockerfile
         sh '/kaniko/executor -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=docker.io/fdjapi10/dsodemo:latest'
       }
     }
