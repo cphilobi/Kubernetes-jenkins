@@ -33,7 +33,7 @@ pipeline {
     stage('Build with Kaniko') {
       steps {
         git 'https://github.com/jenkinsci/docker-inbound-agent.git'
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
+        sh '"/kaniko/executor -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
       }
     }
     stage('OCI Image BnP') {
