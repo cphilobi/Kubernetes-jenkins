@@ -32,17 +32,9 @@ pipeline {
   stages {
     stage('Build with Kaniko') {
       steps {
-        git 'https://github.com/jenkinsci/docker-inbound-agent.git'
+        git 'https://github.com/your-correct-repository.git' // Replace this with your actual repository containing the Dockerfile
         sh '/kaniko/executor -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=docker.io/fdjapi10/dsodemo:latest'
       }
-    }
-    stage('OCI Image BnP') {
-      steps {
-          container('kaniko') {
-             sh "/kaniko/executor -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=docker.io/fdjapi10/dsodemo:latest"
-
-          }
-       }
     }
   }
 }
