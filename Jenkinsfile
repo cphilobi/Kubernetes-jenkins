@@ -1,41 +1,47 @@
 pipeline {
-  environment {
-    imagename = "fdjapi10/sonar"
-    registryCredential = 'dockerhub-creds'
-    dockerImage = ''
+  agent {
+    kubernetes {
+      //cloud 'kubernetes'
+      defaultContainer 'kaniko'
+      yaml '''
+        kind: Pod
+        spec:
+          containers:
+          - name: kaniko
+            image: gcr.io/kaniko-project/executor:v1.6.0-debug
+            imagePullPolicy: Always
+            command:
+            - sleep
+            args:
+            - 99d
+            volumeMounts:
+              - name: jenkins-docker-cfg
+                mountPath: /kaniko/.docker
+          volumes:
+          - name: jenkins-docker-cfg
+            projected:
+              sources:
+              - secret:
+                  name: regcred
+                  items:
+                    - key: .dockerconfigjson
+                      path: config.json
+'''
+    }
   }
-  agent any
   stages {
-    stage('Cloning Git') {
+    stage('Build with Kaniko') {
       steps {
-        git([url: 'https://github.com/fdjapi/docker-jenkins.git', branch: 'main'])
-
+        git 'https://github.com/jenkinsci/docker-inbound-agent.git'
+        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
       }
     }
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build imagename
-        }
-      }
-    }
-    stage('Deploy Image') {
-      steps{
-        script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push("$BUILD_NUMBER")
-             dockerImage.push('latest')
-
+    stage('OCI Image BnP') {
+      steps {
+          container('kaniko') {
+             sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=your_username/myimage:latest'
           }
-        }
-      }
-    }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $imagename:$BUILD_NUMBER"
-         sh "docker rmi $imagename:latest"
-
-      }
+       }
     }
   }
 }
