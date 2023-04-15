@@ -30,10 +30,13 @@ pipeline {
     }
   }
   stages {
-    stage('Build with Kaniko') {
+    stage('OCI Image BnP') {
       steps {
-        git branch: 'main', url: 'https://github.com/fdjapi/Kubernetes-jenkins.git' // Replace this with your actual repository containing the Dockerfile
-        sh '/kaniko/executor -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=docker.io/fdjapi10/dsodemo:latest'
+        git branch: 'your-branch', url: 'https://github.com/fdjapi/Kubernetes-jenkins.git'
+
+        container('kaniko') {
+          sh "/kaniko/executor -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=docker.io/fdjapi10/dsodemo:latest"
+        }
       }
     }
   }
