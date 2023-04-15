@@ -39,7 +39,7 @@ pipeline {
     stage('OCI Image BnP') {
       steps {
           container('kaniko') {
-             sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=your_username/myimage:latest'
+             sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=fdjapi10/myimage:latest'
           }
        }
     }
