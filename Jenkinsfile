@@ -34,7 +34,7 @@ pipeline {
       steps {
         git branch: 'main', url: 'https://github.com/cphilobi/Kubernetes-jenkins.git'
         container('kaniko') {
-          sh "/kaniko/executor --force -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=docker.io/fdjapi10/dsodemo:v2"
+          sh "/kaniko/executor --force -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --insecure --skip-tls-verify --cache=true --destination=docker.io/cphilobi/dsodemo:v2"
         }
       }
     }
